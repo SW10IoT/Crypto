@@ -17,6 +17,8 @@ def evaluate_decryption(decryptet_message):
     score = 0
     for c in decryptet_message:
         x = ord(c)
+        if x < 32:
+            score -= 5
         if x == 32:
             score += 10
         elif (x > 32 and x < 65) or (x > 90 and x < 97) or (x > 122):
@@ -49,7 +51,7 @@ def brute_force_split(split_input):
             s.append(chr(int(v,16) ^ x))
         r = ''.join(s)
         s = evaluate_decryption(r)
-        result[r] = s;
+        result[(r,x,chr(x))] = s;
         #print(str(x) + ':' + chr(x) + '  :  ' + r)
         #print('Score: ' + str(s))
         #print('')
@@ -62,8 +64,9 @@ def brute_force_file():
         results.update(brute_force(h))
     return results
 
-import operator
-results = brute_force_file()
-results = sorted(results.items(), key=operator.itemgetter(1))
-for r in results:
-    print(r)
+def do_stuff():
+    import operator
+    results = brute_force_file()
+    results = sorted(results.items(), key=operator.itemgetter(1))
+    for r in results:
+        print(r)
