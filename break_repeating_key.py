@@ -2,6 +2,7 @@ from base64 import b64decode
 import hamming_distance
 from binascii import hexlify
 from single_byte_xor import brute_force_split
+from repeating_key_xor_encrypt import decrypt
 
 def load_file():
     r = ''
@@ -48,8 +49,6 @@ def examine_keys(matrix):
             print(r)
         input('Press any key to continue..')
 
-    
-
         
 KEY_RANGE = 40
 
@@ -57,14 +56,17 @@ s = load_file()
 h = hexlify(b64decode(s))
 hex_array =  split_hex_string(h)
 
-print(get_key_score(hex_array, KEY_RANGE, return_sorted=True))
+#print(get_key_score(hex_array, KEY_RANGE, return_sorted=True))
 
 KEY_SIZE = 5
 PADDING_VALUE = b'ff'
 
 blocks = make_blocks_with_padding(hex_array, KEY_SIZE, PADDING_VALUE)
 transposed_matrix = transpose(blocks)
-examine_keys(transposed_matrix)
+#examine_keys(transposed_matrix)
+#KEY: ionio
+
+print(decrypt(s, 'ionio'))
 
 #hamming distance test
 #print(hamming_distance.calculate('this is a test', 'wokka wokka!!!'))
