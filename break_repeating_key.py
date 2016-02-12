@@ -15,25 +15,40 @@ def split_hex_string(hex_string):
 def make_blocks(hex_array, key_size):
     return [hex_array[i:i+key_size] for i in range(0, len(hex_array), key_size)]
 
+def make_blocks_with_padding(hex_array, key_size, padding_value):
+    blocks = make_blocks(hex_array, key_size)
+    last_block_index = len(blocks)-1
+    last_block_length = len(blocks[last_block_index])
+    if last_block_length is not key_size:
+        for x in range(last_block_length, key_size):
+            blocks[last_block_index].append(padding_value)
+    return blocks
 
-# For each KEYSIZE, take the first KEYSIZE worth of bytes, and the second KEYSIZE worth of bytes, and find the edit distance between them. Normalize this result by dividing by KEYSIZE.
-def block_distance(block_1, block_2, key_size):
+def block_distance_normalized(block_1, block_2, key_size):
     return hamming_distance.calculate_hex(block_1, block_2) / key_size
+
+def get_key_score(hex_array, key_range_max, return_sorted=False):
+    r = dict()
+    for x in range(1, KEY_RANGE):
+        b = make_blocks(hex_array, x)
+        r[x]=block_distance_normalized(b[0], b[1], x)
+    if return_sorted:
+        return sorted(r.items(), key = lambda p: p[1])
+    return r
 
 KEY_RANGE = 40
 
-# TEST
 s = load_file()
 h = hexlify(b64decode(s))
-splittet_h =  split_hex_string(h)
-blocks = make_blocks(splittet_h, 10)
+hex_array =  split_hex_string(h)
 
+print(get_key_score(hex_array, KEY_RANGE, return_sorted=True))
 
-
-for x in range(1, KEY_RANGE):
-    b = make_blocks(splittet_h, x)
-    print(block_distance(b[0], b[1], x))
-
+KEY_SIZE = 5
+PADDING_VALUE = b'ff'
+blocks = make_blocks_with_padding(hex_array, KEY_SIZE, PADDING_VALUE)
+#print(blocks)
+print(list(zip(*blocks)))
 
 #hamming distance test
 #print(hamming_distance.calculate('this is a test', 'wokka wokka!!!'))
