@@ -1,4 +1,11 @@
-def calculate(string1, string2):
+def calculate_hex(hex_1, hex_2):
+    r = 0;
+    for x,y in zip(hex_1, hex_2):
+        r += bit_len_count(int(x,16) ^ int(y,16))
+    return r
+
+
+def calculate_string(string1, string2):
     r = 0;
     for x,y in zip(string1,string2):
         r += bit_len_count(ord(x) ^ ord(y))
